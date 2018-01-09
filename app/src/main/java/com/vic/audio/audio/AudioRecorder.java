@@ -25,9 +25,9 @@ public class AudioRecorder {
     private boolean canLoop = true;
 
     public AudioRecorder(){
-        Log.d("MLJ","AudioRecorder Construct....");
         mWavFileWriter = new WavFileWriter();
-        mWavFileWriter.openFile();
+        boolean canWrite = mWavFileWriter.openFile();
+Log.d("MLJ","canWrite=" + canWrite);
         mBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE_IN_HZ,CHANNEL_CONFIG,AUDIO_FORMAT);
         mAudioRecord = new AudioRecord(AUDIO_SOURCE,SAMPLE_RATE_IN_HZ,CHANNEL_CONFIG,AUDIO_FORMAT,mBufferSize * 4);
     }
@@ -36,6 +36,17 @@ public class AudioRecorder {
      * 开始录音
      */
     public void startRecord(){
+
+        if (mBufferSize == AudioRecord.ERROR_BAD_VALUE) {
+            Log.e(TAG, "Invalid parameter !");
+            return;
+        }
+
+        if(mAudioRecord.getState() == AudioRecord.STATE_UNINITIALIZED){
+            Log.e(TAG, "AudioRecord initialize fail !");
+            return;
+        }
+
         mAudioRecord.startRecording();
         new RecordThread().start();
     }
@@ -53,15 +64,17 @@ public class AudioRecorder {
     private class RecordThread extends Thread{
         @Override
         public void run() {
-            byte[] buf = new byte[2 * 1024];
             while(canLoop){
-                int ret = mAudioRecord.read(buf,0,mBufferSize);
-                if(ret == AudioRecord.ERROR_INVALID_OPERATION){
-                    Log.d(TAG,"ERROR_INVALID_OPERATION");
-                }else if(ret == AudioRecord.ERROR_BAD_VALUE){
-                    Log.d(TAG,"ERROR_BAD_VALUE");
-                }else{
-                    mWavFileWriter.writeData(buf,0,buf.length);
+                byte[] buffer = new byte[1024 * 2];
+                int ret = mAudioRecord.read(buffer, 0, buffer.length);
+                if (ret == AudioRecord.ERROR_INVALID_OPERATION) {
+                    Log.e(TAG, "Error ERROR_INVALID_OPERATION");
+                } else if (ret == AudioRecord.ERROR_BAD_VALUE) {
+                    Log.e(TAG, "Error ERROR_BAD_VALUE");
+                } else {
+                    Log.d(TAG,"start write");
+
+                    mWavFileWriter.writeData(buffer,0,buffer.length);
                 }
             }
         }

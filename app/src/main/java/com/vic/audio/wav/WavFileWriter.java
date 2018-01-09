@@ -16,7 +16,8 @@ import java.nio.ByteOrder;
  */
 
 public class WavFileWriter {
-    private static final String FILE_PATH = Environment.getExternalStorageDirectory() + File.separator + "apk" + File.separator + "aaa.wav";
+    private static final String FILE_PATH = Environment.getExternalStorageDirectory() +
+            File.separator + "apk" + File.separator + "aaa.wav";
 
     private DataOutputStream dos = null;
     private int mDataSize = 0;
