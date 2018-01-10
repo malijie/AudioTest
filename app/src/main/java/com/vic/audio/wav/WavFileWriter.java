@@ -1,6 +1,7 @@
 package com.vic.audio.wav;
 
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -16,14 +17,16 @@ import java.nio.ByteOrder;
  */
 
 public class WavFileWriter {
-    private static final String FILE_PATH = Environment.getExternalStorageDirectory() +
-            File.separator + "apk" + File.separator + "aaa.wav";
+    private static final String FILE_PATH = Environment.getExternalStorageDirectory() + File.separator + "test.wav";
 
     private DataOutputStream dos = null;
     private int mDataSize = 0;
 
     public boolean openFile(){
         try {
+            if(dos != null){
+                closeFile();
+            }
             dos = new DataOutputStream(new FileOutputStream(FILE_PATH));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -39,16 +42,19 @@ public class WavFileWriter {
      *
      */
     private boolean writeWavFile(int sampleRateInHz, int channels, int bitsPerSample ) {
+        if(dos == null){
+            return false;
+        }
         WavFileHeader wavFileHeader = new WavFileHeader(sampleRateInHz,channels,bitsPerSample);
         try {
             dos.writeBytes(wavFileHeader.mChunkID);
             dos.write(intToByteArray(wavFileHeader.mChunkSize),0,4);
             dos.writeBytes(wavFileHeader.mFormat);
 
-            dos.writeBytes(wavFileHeader.mSubchunk1ID);
+            dos.writeBytes(wavFileHeader.mSubChunk1ID);
             dos.write(intToByteArray(wavFileHeader.mSubchunk1Size),0,4);
             dos.write(shortToByteArray(wavFileHeader.mAudioFormat),0,2);
-            dos.write(shortToByteArray(wavFileHeader.mNumChannels),0,2);
+            dos.write(shortToByteArray(wavFileHeader.mNumChannel),0,2);
             dos.write(intToByteArray(wavFileHeader.mSampleRate),0,4);
             dos.write(intToByteArray(wavFileHeader.mByteRate),0,4);
             dos.write(shortToByteArray(wavFileHeader.mBlockAlign),0,2);
@@ -57,7 +63,7 @@ public class WavFileWriter {
             dos.writeBytes(wavFileHeader.mSubChunk2ID);
             dos.write(intToByteArray(wavFileHeader.mSubChunk2Size),0,4);
 
-
+            Log.d("MLJ","wavFileHeader=" + wavFileHeader);
         } catch (IOException e) {
             e.printStackTrace();
             return false;

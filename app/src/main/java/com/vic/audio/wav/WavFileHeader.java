@@ -14,10 +14,10 @@ public class WavFileHeader {
     public int mChunkSize = 0;
     public String mFormat = "WAVE";
 
-    public String mSubchunk1ID = "fmt";
+    public String mSubChunk1ID = "fmt";
     public int mSubchunk1Size = 16;
     public short mAudioFormat = 1;
-    public short mNumChannels = 1;
+    public short mNumChannel = 1;
     public int mSampleRate = 44100;
     public int mByteRate = 0;
     public short mBlockAlign = 0;//NumChannels * BitsPerSample/8
@@ -29,10 +29,28 @@ public class WavFileHeader {
     public WavFileHeader(int sampleRateInHz, int channels, int bitsPerSample){
         mSampleRate = sampleRateInHz;
         mBitsPerSample = (short) bitsPerSample;
-        mNumChannels = (short) channels;
-        mByteRate = mSampleRate * mNumChannels * mBitsPerSample/8;
-        mBlockAlign = (short)(mNumChannels * mBitsPerSample/8);
+        mNumChannel = (short) channels;
+        mByteRate = mSampleRate * mNumChannel * mBitsPerSample/8;
+        mBlockAlign = (short)(mNumChannel * mBitsPerSample/8);
 
     }
 
+    @Override
+    public String toString() {
+        return "WavFileHeader MLJ{" +
+                "mChunkID='" + mChunkID + '\'' +
+                ", mChunkSize=" + mChunkSize +
+                ", mFormat='" + mFormat + '\'' +
+                ", mSubChunk1ID='" + mSubChunk1ID + '\'' +
+                ", mSubchunk1Size=" + mSubchunk1Size +
+                ", mAudioFormat=" + mAudioFormat +
+                ", mNumChannel=" + mNumChannel +
+                ", mSampleRate=" + mSampleRate +
+                ", mByteRate=" + mByteRate +
+                ", mBlockAlign=" + mBlockAlign +
+                ", mBitsPerSample=" + mBitsPerSample +
+                ", mSubChunk2ID='" + mSubChunk2ID + '\'' +
+                ", mSubChunk2Size=" + mSubChunk2Size +
+                '}';
+    }
 }
