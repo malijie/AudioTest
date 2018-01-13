@@ -17,7 +17,9 @@ import java.nio.ByteOrder;
  */
 
 public class WavFileWriter {
-    private static final String FILE_PATH = Environment.getExternalStorageDirectory() + File.separator + "test.wav";
+    private static final String TAG = WavFileWriter.class.getSimpleName();
+    private static final String FILE_PATH = Environment.getExternalStorageDirectory()
+            + File.separator + "apk" + File.separator + "aaa.wav";
 
     private DataOutputStream dos = null;
     private int mDataSize = 0;
@@ -52,7 +54,7 @@ public class WavFileWriter {
             dos.writeBytes(wavFileHeader.mFormat);
 
             dos.writeBytes(wavFileHeader.mSubChunk1ID);
-            dos.write(intToByteArray(wavFileHeader.mSubchunk1Size),0,4);
+            dos.write(intToByteArray(wavFileHeader.mSubChunk1Size),0,4);
             dos.write(shortToByteArray(wavFileHeader.mAudioFormat),0,2);
             dos.write(shortToByteArray(wavFileHeader.mNumChannel),0,2);
             dos.write(intToByteArray(wavFileHeader.mSampleRate),0,4);
@@ -63,7 +65,7 @@ public class WavFileWriter {
             dos.writeBytes(wavFileHeader.mSubChunk2ID);
             dos.write(intToByteArray(wavFileHeader.mSubChunk2Size),0,4);
 
-            Log.d("MLJ","wavFileHeader=" + wavFileHeader);
+            Log.d(TAG,"wavFileHeader=" + wavFileHeader);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -80,6 +82,7 @@ public class WavFileWriter {
         try {
             dos.write(buf,offset,count);
             mDataSize += count;
+            Log.d(TAG,"DataSize=" + mDataSize);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -113,6 +116,7 @@ public class WavFileWriter {
             wavFile.seek(WavFileHeader.WAV_SUB_CHUNKSIZE2_OFFSET);
             wavFile.write(intToByteArray((mDataSize)), 0, 4);
             wavFile.close();
+            Log.d(TAG,"writeDataSize,waveFile=" +wavFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return false;

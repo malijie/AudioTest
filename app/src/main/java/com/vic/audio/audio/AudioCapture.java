@@ -20,6 +20,8 @@ public class AudioCapture {
 
     private int mBufferSize;
     private boolean canLoop = true;
+    private boolean mIsStartCapture = false;
+
     private Thread mRecordThread = null;
     private AudioRecord mAudioRecord = null;
 
@@ -39,6 +41,11 @@ public class AudioCapture {
     }
 
     public boolean startCapture(int audioSource, int sampleRateInHz, int channelConfig, int audioFormat) {
+        if(mIsStartCapture){
+            Log.e(TAG, "Already start capture audio!");
+            return false;
+        }
+
         mBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE_IN_HZ, CHANNEL_CONFIG, AUDIO_FORMAT);
         if (mBufferSize == AudioRecord.ERROR_BAD_VALUE) {
             Log.e(TAG, "Invalid parameter !");
@@ -56,6 +63,8 @@ public class AudioCapture {
         mRecordThread = new Thread(new RecordRunnable());
         mRecordThread.start();
 
+        mIsStartCapture = true;
+
         return true;
     }
 
@@ -71,7 +80,7 @@ public class AudioCapture {
                     Log.e(TAG, "Error ERROR_BAD_VALUE");
                 } else {
                     mAudioFrameCapturedListener. onAudioFrameCaptured(buffer);
-                    Log.d("MLJ","start write,buffer length=" + buffer.length);
+                    Log.d(TAG,"start write,buffer length=" + buffer.length);
                 }
             }
         }
@@ -81,6 +90,10 @@ public class AudioCapture {
      * 停止录音
      */
     public void stopRecord(){
+        if(!mIsStartCapture){
+            return;
+        }
+
         canLoop = false;
         try {
             mRecordThread.interrupt();
@@ -93,6 +106,9 @@ public class AudioCapture {
             mAudioRecord.stop();
         }
         mAudioRecord.release();
+
+        mIsStartCapture = false;
         mAudioFrameCapturedListener = null;
+        Log.d(TAG,"stop capture audio success");
     }
 }
