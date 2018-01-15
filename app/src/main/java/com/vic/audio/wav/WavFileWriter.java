@@ -3,6 +3,8 @@ package com.vic.audio.wav;
 import android.os.Environment;
 import android.util.Log;
 
+import com.vic.audio.data.ConstantData;
+
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,8 +20,6 @@ import java.nio.ByteOrder;
 
 public class WavFileWriter {
     private static final String TAG = WavFileWriter.class.getSimpleName();
-    private static final String FILE_PATH = Environment.getExternalStorageDirectory()
-            + File.separator + "apk" + File.separator + "aaa.wav";
 
     private DataOutputStream dos = null;
     private int mDataSize = 0;
@@ -29,7 +29,7 @@ public class WavFileWriter {
             if(dos != null){
                 closeFile();
             }
-            dos = new DataOutputStream(new FileOutputStream(FILE_PATH));
+            dos = new DataOutputStream(new FileOutputStream(ConstantData.AUDIO_FILE_PATH));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return false;
@@ -110,7 +110,7 @@ public class WavFileWriter {
         }
 
         try {
-            RandomAccessFile wavFile = new RandomAccessFile(FILE_PATH, "rw");
+            RandomAccessFile wavFile = new RandomAccessFile(ConstantData.AUDIO_FILE_PATH, "rw");
             wavFile.seek(WavFileHeader.WAV_CHUNKSIZE_OFFSET);
             wavFile.write(intToByteArray((mDataSize + WavFileHeader.WAV_CHUNKSIZE_EXCLUDE_DATA)), 0, 4);
             wavFile.seek(WavFileHeader.WAV_SUB_CHUNKSIZE2_OFFSET);

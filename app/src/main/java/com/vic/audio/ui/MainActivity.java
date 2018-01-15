@@ -10,7 +10,8 @@ import android.widget.Toast;
 
 import com.vic.audio.R;
 import com.vic.audio.audio.AudioCapture;
-import com.vic.audio.audio.AudioRecorder;
+import com.vic.audio.audio.AudioPlayer;
+import com.vic.audio.wav.WavFileReader;
 import com.vic.audio.wav.WavFileWriter;
 
 
@@ -19,10 +20,10 @@ public class MainActivity extends AppCompatActivity implements AudioCapture.OnAu
     private Button mBtnAudioRecord = null;
     private Button mBtnAudioPlay = null;
     private Button mBtnStopRecord = null;
-    private AudioRecorder mAudioRecorder= null;
 
     private AudioCapture mAudioCapture;
     private WavFileWriter mWavFileWriter;
+    private AudioPlayer mAudioPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity implements AudioCapture.OnAu
     }
 
     private void initData() {
-        mAudioRecorder = new AudioRecorder();
     }
 
     private void initViews() {
@@ -56,10 +56,6 @@ public class MainActivity extends AppCompatActivity implements AudioCapture.OnAu
 
         mAudioCapture.setOnAudioFrameCapturedListener(this);
         startCapture();
-//        mTester = new AudioCaptureTester();
-//        mTester.startTesting();
-
-
 
     }
 
@@ -70,15 +66,9 @@ public class MainActivity extends AppCompatActivity implements AudioCapture.OnAu
 
     public void stopRecord(View id){
         Toast.makeText(this, "停止录音", Toast.LENGTH_SHORT).show();
-//
         mAudioCapture.stopRecord();
         mWavFileWriter.closeFile();
 
-//        if (mTester != null) {
-//            mTester.stopTesting();
-//            Log.d("MLJ","stopRecord AudioRecorder=" );
-//            Toast.makeText(this, "Stop Testing !", Toast.LENGTH_SHORT).show();
-//        }
     }
 
     /**
@@ -86,6 +76,10 @@ public class MainActivity extends AppCompatActivity implements AudioCapture.OnAu
      * @param id
      */
     public void startPlay(View id){
+        Toast.makeText(this,"开始播放",Toast.LENGTH_SHORT).show();
+
+        mAudioPlayer = new AudioPlayer();
+        mAudioPlayer.startPlay();
 
     }
 
